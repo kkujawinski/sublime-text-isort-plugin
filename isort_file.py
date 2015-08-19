@@ -13,7 +13,16 @@ class IsortCommand(sublime_plugin.TextCommand):
     view = None
 
     def get_region(self, view):
-        return sublime.Region(0, view.size())
+        selection = view.sel()[0]
+        if selection.empty():
+            return sublime.Region(0, view.size())
+
+        begin_line, begin_column = view.rowcol(selection.begin())
+        end_line, end_column = view.rowcol(selection.end())
+        return sublime.Region(
+            view.text_point(begin_line, 0),
+            view.text_point(end_line, 0)
+        )
 
     def get_buffer_contents(self, view):
         return view.substr(self.get_region(view))
